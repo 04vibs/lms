@@ -66,8 +66,19 @@ exports.courses.post('/:id/batches', (request, response) => {
         }
     })
         .then((course) => {
-        db_2.Batches.create({ name: request.body.name }).then((batch) => {
-            course.addBatches(batch).then((ans) => response.send(ans));
+        db_2.Batches.findOne({
+            where: {
+                name: request.body.name
+            }
+        }).then((existingBatch) => {
+            if (existingBatch) {
+                course.addBatches(existingBatch).then((ans) => response.send(ans));
+            }
+            else {
+                db_2.Batches.create({ name: request.body.name }).then((batch) => {
+                    course.addBatches(batch).then((ans) => response.send(ans));
+                });
+            }
         });
     });
 });
@@ -118,8 +129,8 @@ exports.courses.get('/:id/batches/:bid/lectures', (req, res) => {
 exports.courses.get('/:id/batches/:bid/lectures/:lid', (req, res) => {
     db_3.Lectures.findAll({
         where: {
-            id: req.params.id,
-            bid: req.params.bid
+            id: req.params.lid,
+            batchId: req.params.bid
         }
     })
         .then((lectures) => {
@@ -127,7 +138,7 @@ exports.courses.get('/:id/batches/:bid/lectures/:lid', (req, res) => {
     })
         .catch((err) => {
         res.status(500).send({
-            err: "cannot get lectures by id"
+            err
         });
     });
 });

@@ -7,12 +7,12 @@ import { Teacher } from './interfaces/Teacher';
 import { Lecture } from './interfaces/Lecture';
 
 export const db = new Sequelize({
-    username: 'root',
-    password: 'root',
-    database: 'lms',
+     username: 'root',
+     password: 'root',
+     database: 'lms',
     host: 'localhost',
-    dialect: 'mysql',
-   // storage: 'data.db',
+    dialect: 'sqlite',
+    storage: 'data.db',
    
 });
 

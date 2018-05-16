@@ -3,4 +3,5 @@ export interface Batch {
 
     addCourses(course: any);
     getStudents();
+    addStudent(student: any);
 }

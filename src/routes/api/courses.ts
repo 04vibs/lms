@@ -74,9 +74,21 @@ courses.post('/:id/batches', (request, response) => {
         }
     })
     .then((course) => {     
-      Batches.create({ name: request.body.name }).then((batch) => {
-        course.addBatches(batch).then((ans) => response.send(ans))   
-     });       
+      Batches.findOne({
+          where: {
+              name: request.body.name
+          }
+      }).then((existingBatch) => {
+          if(existingBatch) {
+             course.addBatches(existingBatch).then((ans) => response.send(ans))
+          }
+          else {
+            Batches.create({ name: request.body.name }).then((batch) => {
+                course.addBatches(batch).then((ans) => response.send(ans))   
+             });   
+          }
+      })
+          
     })
 })
 
@@ -133,8 +145,8 @@ courses.get('/:id/batches/:bid/lectures/:lid', (req, res) => {
     
       Lectures.findAll({
           where: {
-              id: req.params.id,
-              bid: req.params.bid
+              id: req.params.lid,
+              batchId: req.params.bid
           }
       })
         .then((lectures) => {
@@ -142,7 +154,7 @@ courses.get('/:id/batches/:bid/lectures/:lid', (req, res) => {
         })
         .catch((err) => {
             res.status(500).send({
-                err:"cannot get lectures by id"
+                err
             })
         })
 });
